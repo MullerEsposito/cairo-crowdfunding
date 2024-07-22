@@ -5,10 +5,10 @@ use starknet::ContractAddress;
 #[starknet::interface]
 trait ICrowdfunding<TContractState> {
     fn contribute(ref self: TContractState);
-    fn createRequest(ref self: TContractState, description: felt252, value: usize, recipient: ByteArray);
+    fn createRequest(ref self: TContractState, description: felt252, value: usize, recipient: ContractAddress);
     fn approveRequest(ref self: TContractState, index: usize);
     fn finalizeRequest(ref self: TContractState, index: usize);
-    fn getRequestVoters(ref self: TContractState, indexRequest: usize, addressVoter: ByteArray) -> bool;
+    fn getRequestVoters(ref self: TContractState, indexRequest: usize, addressVoter: ContractAddress) -> bool;
     fn getRequestCount(ref self: TContractState) -> usize;
     fn getSummary(ref self: TContractState) -> Summary;
 }
@@ -37,10 +37,10 @@ mod Crowdfunding {
     #[abi(embed_v0)]
     impl Crowdfunding of super::ICrowdfunding<ContractState> {
         fn contribute(ref self: ContractState) {}
-        fn createRequest(ref self: ContractState, description: felt252, value: usize, recipient: ByteArray) {}
+        fn createRequest(ref self: ContractState, description: felt252, value: usize, recipient: ContractAddress) {}
         fn approveRequest(ref self: ContractState, index: usize) {}
         fn finalizeRequest(ref self: ContractState, index: usize) {}
-        fn getRequestVoters(ref self: ContractState, indexRequest: usize, addressVoter: ByteArray) -> bool {
+        fn getRequestVoters(ref self: ContractState, indexRequest: usize, addressVoter: ContractAddress) -> bool {
             true
         }
         fn getRequestCount(ref self: ContractState) -> usize {
