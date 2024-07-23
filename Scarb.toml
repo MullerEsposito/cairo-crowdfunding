@@ -8,9 +8,13 @@ edition = "2023_11"
 [dependencies]
 starknet = "2.6.3"
 alexandria_storage = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "98aadc7e3f12dbb026e853604fe2cc061451cc8a" }
+openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v0.13.0" }
 
 [dev-dependencies]
 snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry.git", tag = "v0.26.0" }
+
+[[target.starknet-contract]]
+sierra = true
 
 [scripts]
 test = "snforge test"
