@@ -7,9 +7,10 @@ edition = "2023_11"
 
 [dependencies]
 starknet = "2.6.3"
+alexandria_storage = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "98aadc7e3f12dbb026e853604fe2cc061451cc8a" }
 
 [dev-dependencies]
-snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry.git", tag = "v0.22.0" }
+snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry.git", tag = "v0.26.0" }
 
 [scripts]
 test = "snforge test"

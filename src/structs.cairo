@@ -1,5 +1,6 @@
-use starknet::ContractAddress;
+use starknet::{ContractAddress, Store};
 
+// #[derive(Drop, Serde, Store)]
 pub struct Summary {
     minimumContribution: usize,
     balance: usize,
@@ -8,6 +9,7 @@ pub struct Summary {
     managerAddress: ContractAddress
 }
 
+#[derive(Store)]
 pub struct Request {
     description: ByteArray,
     value: usize,

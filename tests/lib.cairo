@@ -1,2 +1,2 @@
 pub mod crowdfunding;
-mod structs;
+mod common;

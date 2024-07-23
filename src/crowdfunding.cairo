@@ -1,31 +1,34 @@
 use crowdfunding::structs::Summary;
 use crowdfunding::structs::Request;
 use starknet::ContractAddress;
+use alexandria_storage::list::{List, ListTrait};
 
 #[starknet::interface]
-trait ICrowdfunding<TContractState> {
+pub trait ICrowdfunding<TContractState> {
     fn contribute(ref self: TContractState);
     fn createRequest(ref self: TContractState, description: felt252, value: usize, recipient: ContractAddress);
     fn approveRequest(ref self: TContractState, index: usize);
     fn finalizeRequest(ref self: TContractState, index: usize);
     fn getRequestVoters(ref self: TContractState, indexRequest: usize, addressVoter: ContractAddress) -> bool;
     fn getRequestCount(ref self: TContractState) -> usize;
-    fn getSummary(ref self: TContractState) -> Summary;
+    // fn getSummary(ref self: TContractState) -> Summary;
+    fn getManager(self: @TContractState) -> ContractAddress;
 }
 
 #[starknet::contract]
-mod Crowdfunding {
+pub mod Crowdfunding {
     use super::Summary;
     use super::Request;
     use super::ContractAddress;
+    use super::{List, ListTrait};
 
     #[storage]
     struct Storage {
         manager: ContractAddress,
         minimumContribution: usize,
-        approvers: Felt252Dict<bool>,
+        approvers: LegacyMap::<ContractAddress, bool>,
         numberOfApprovers: usize,
-        requests: Array<Request>
+        // requests: List<Request>
     }
 
     #[constructor]
@@ -46,14 +49,17 @@ mod Crowdfunding {
         fn getRequestCount(ref self: ContractState) -> usize {
             1
         }
-        fn getSummary(ref self: ContractState) -> Summary {
-            Summary { 
-                minimumContribution: 1, 
-                balance: 1, 
-                numberOfRequests: 1, 
-                numberOfApprovers: 1,
-                managerAddress: "address"
-            }
+        // fn getSummary(ref self: ContractState) -> Summary {
+        //     Summary { 
+        //         minimumContribution: 1, 
+        //         balance: 1, 
+        //         numberOfRequests: 1, 
+        //         numberOfApprovers: 1,
+        //         managerAddress: "address"
+        //     }
+        // }
+        fn getManager(self: @ContractState) -> ContractAddress {
+            self.manager.read()
         }
     }
 }
