@@ -13,6 +13,7 @@ pub trait ICrowdfunding<TContractState> {
     fn getRequestCount(ref self: TContractState) -> usize;
     // fn getSummary(ref self: TContractState) -> Summary;
     fn getManager(self: @TContractState) -> ContractAddress;
+    fn getMinimumContribution(self: @TContractState) -> usize;
 }
 
 #[starknet::contract]
@@ -60,6 +61,9 @@ pub mod Crowdfunding {
         // }
         fn getManager(self: @ContractState) -> ContractAddress {
             self.manager.read()
+        }
+        fn getMinimumContribution(self: @ContractState) -> usize {
+            self.minimumContribution.read()
         }
     }
 }
