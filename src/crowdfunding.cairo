@@ -1,6 +1,6 @@
 use crowdfunding::structs::Summary;
 use crowdfunding::structs::Request;
-use starknet::ContractAddress;
+use starknet::{ContractAddress, get_caller_address};
 use alexandria_storage::list::{List, ListTrait};
 
 #[starknet::interface]
@@ -20,7 +20,7 @@ pub trait ICrowdfunding<TContractState> {
 pub mod Crowdfunding {
     use super::Summary;
     use super::Request;
-    use super::ContractAddress;
+    use super::{ContractAddress, get_caller_address};
     use super::{List, ListTrait};
 
     #[storage]
@@ -40,7 +40,18 @@ pub mod Crowdfunding {
     
     #[abi(embed_v0)]
     impl Crowdfunding of super::ICrowdfunding<ContractState> {
+<<<<<<< HEAD
         fn contribute(ref self: ContractState, amount: usize) {}
+=======
+        fn contribute(ref self: ContractState, amount: usize) {
+            let minimumContribution = self.minimumContribution.read();
+            assert!(amount > minimumContribution, "The contribution need to be greater than {}", minimumContribution);
+
+            let caller = get_caller_address();
+            self.approvers.write(caller, true);
+        }
+
+>>>>>>> 6864bf0499b49160ef616bd6b4556e60f32d8643
         fn createRequest(ref self: ContractState, description: felt252, value: usize, recipient: ContractAddress) {}
         fn approveRequest(ref self: ContractState, index: usize) {}
         fn finalizeRequest(ref self: ContractState, index: usize) {}
