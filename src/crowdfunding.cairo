@@ -5,7 +5,7 @@ use alexandria_storage::list::{List, ListTrait};
 
 #[starknet::interface]
 pub trait ICrowdfunding<TContractState> {
-    fn contribute(ref self: TContractState);
+    fn contribute(ref self: TContractState, amount: usize);
     fn createRequest(ref self: TContractState, description: felt252, value: usize, recipient: ContractAddress);
     fn approveRequest(ref self: TContractState, index: usize);
     fn finalizeRequest(ref self: TContractState, index: usize);
@@ -40,7 +40,7 @@ pub mod Crowdfunding {
     
     #[abi(embed_v0)]
     impl Crowdfunding of super::ICrowdfunding<ContractState> {
-        fn contribute(ref self: ContractState) {}
+        fn contribute(ref self: ContractState, amount: usize) {}
         fn createRequest(ref self: ContractState, description: felt252, value: usize, recipient: ContractAddress) {}
         fn approveRequest(ref self: ContractState, index: usize) {}
         fn finalizeRequest(ref self: ContractState, index: usize) {}
