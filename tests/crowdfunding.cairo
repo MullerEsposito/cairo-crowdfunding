@@ -27,7 +27,6 @@ fn it_should_allow_people_to_contribute_money_and_marks_them_as_approvers() {
     let manager = contract_address_const::<'manager'>();
     let approver = contract_address_const::<'approver'>();
     cheat_caller_address_global(approver);
-
     let minimumContribution: usize = 10;
     let contribution = 15;
     let (crowdfunding, crowdfundingAddress) = deployCrowdfundingContract(manager, minimumContribution);
