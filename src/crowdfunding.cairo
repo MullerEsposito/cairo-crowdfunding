@@ -6,7 +6,7 @@ use alexandria_storage::list::{List, ListTrait};
 #[starknet::interface]
 pub trait ICrowdfunding<TContractState> {
     fn contribute(ref self: TContractState, amount: usize);
-    fn createRequest(ref self: TContractState, description: felt252, value: usize, recipient: ContractAddress);
+    fn createRequest(ref self: TContractState, description: ByteArray, value: usize, recipient: ContractAddress);
     fn approveRequest(ref self: TContractState, index: usize);
     fn finalizeRequest(ref self: TContractState, index: usize);
     fn getRequestVoters(ref self: TContractState, indexRequest: usize, addressVoter: ContractAddress) -> bool;
@@ -29,7 +29,7 @@ pub mod Crowdfunding {
         minimumContribution: usize,
         approvers: LegacyMap::<ContractAddress, bool>,
         numberOfApprovers: usize,
-        // requests: List<Request>
+        requests: List<Request>
     }
 
     #[constructor]
@@ -48,7 +48,11 @@ pub mod Crowdfunding {
             self.approvers.write(caller, true);
         }
 
-        fn createRequest(ref self: ContractState, description: felt252, value: usize, recipient: ContractAddress) {}
+        fn createRequest(ref self: ContractState, description: ByteArray, value: usize, recipient: ContractAddress) {
+            let newRequest = Request { description, value, recipient, isComplete: false, yesVotes: 0, voters: Default::default() };
+            // self.requests.append(newRequest);
+        }
+        
         fn approveRequest(ref self: ContractState, index: usize) {}
         fn finalizeRequest(ref self: ContractState, index: usize) {}
         fn getRequestVoters(ref self: ContractState, indexRequest: usize, addressVoter: ContractAddress) -> bool {
