@@ -9,7 +9,7 @@ pub fn deployCrowdfundingContract(manager: ContractAddress, minimumContribution:
     let mut constructor_calldata = array![manager.into(), minimumContribution.into()];
 
     let (contract_address, _) = contract.deploy(@constructor_calldata).unwrap();
-    let contract = ICrowdfundingDispatcher { contract_address };
+    let dispatch = ICrowdfundingDispatcher { contract_address };
 
-    (contract, contract_address)
+    (dispatch, contract_address)
 }
