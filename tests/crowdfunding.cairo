@@ -69,7 +69,7 @@ fn it_should_not_to_be_able_to_do_a_contribution_less_than_minimum() {
 }
 
 #[test]
-fn it_should_not_be_able_to_manager_to_make_a_payment_request() {
+fn it_should_be_able_to_manager_to_make_a_payment_request() {
     let caller: ContractAddress = contract_address_const::<'caller'>();
     let recipient: ContractAddress = contract_address_const::<'recipiente'>();
     let requestDescription: ByteArray = "Test request";

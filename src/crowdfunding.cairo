@@ -1,5 +1,5 @@
-use crowdfunding::structs::Summary;
-use crowdfunding::structs::Request;
+// use crowdfunding::structs::Summary;
+use crowdfunding::structs::{Request, RequestVoters};
 use starknet::{ContractAddress, get_caller_address};
 use alexandria_storage::list::{List, ListTrait};
 
@@ -18,18 +18,19 @@ pub trait ICrowdfunding<TContractState> {
 
 #[starknet::contract]
 pub mod Crowdfunding {
-    use super::Summary;
-    use super::Request;
+    // use super::Summary;
+    use super::{Request, RequestVoters};
     use super::{ContractAddress, get_caller_address};
     use super::{List, ListTrait};
+    use starknet::storage::Map;
 
     #[storage]
     struct Storage {
         manager: ContractAddress,
         minimumContribution: usize,
-        approvers: LegacyMap::<ContractAddress, bool>,
+        approvers: Map::<ContractAddress, bool>,
         numberOfApprovers: usize,
-        requests: List<Request>
+        requests: Map::<usize, RequestVoters>
     }
 
     #[constructor]
@@ -49,8 +50,8 @@ pub mod Crowdfunding {
         }
 
         fn createRequest(ref self: ContractState, description: ByteArray, value: usize, recipient: ContractAddress) {
-            let newRequest = Request { description, value, recipient, isComplete: false, yesVotes: 0, voters: Default::default() };
-            // self.requests.append(newRequest);
+            let _newRequest = Request { description, value, recipient, isComplete: false, yesVotes: 0 };
+            self.requests.entry(0).request.write(_newRequest);
         }
         
         fn approveRequest(ref self: ContractState, index: usize) {}
