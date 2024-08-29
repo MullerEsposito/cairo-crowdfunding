@@ -1,4 +1,5 @@
 use starknet::{ContractAddress, Store};
+use starknet::storage::{Vec};
 use alexandria_storage::list::{List, ListTrait};
 
 // #[derive(Drop, Serde, Store)]
@@ -10,7 +11,7 @@ use alexandria_storage::list::{List, ListTrait};
 //     pub managerAddress: ContractAddress
 // }
 
-#[derive(Drop, Serde, Store)]
+#[derive(Drop, Serde, starknet::Store)]
 pub struct Request {
     pub description: ByteArray,
     pub value: usize,
@@ -25,7 +26,7 @@ pub struct RequestVoters {
     pub voters: Vec<Voter>
 }
 
-#[derive(Drop, Serde, Store)]
+#[derive(Drop, Serde, starknet::Store)]
 struct Voter {
     address: ContractAddress,
     isVoted: bool
