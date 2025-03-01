@@ -6,12 +6,12 @@ edition = "2023_11"
 # See more keys and their definitions at https://docs.swmansion.com/scarb/docs/reference/manifest.html
 
 [dependencies]
-starknet = "2.7.1"
-alexandria_storage = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "98aadc7e3f12dbb026e853604fe2cc061451cc8a" }
-openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v0.15.1" }
+starknet = "2.10.1"
+openzeppelin = "0.20.0"
 
 [dev-dependencies]
-snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry.git", tag = "v0.26.0" }
+snforge_std = "0.37.0"
+assert_macros = "2.10.1"
 
 [[target.starknet-contract]]
 sierra = true
