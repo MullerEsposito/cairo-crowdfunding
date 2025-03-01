@@ -1,28 +1,26 @@
-// use crowdfunding::structs::Summary;
-use crowdfunding::structs::{Request, RequestVoters};
 use starknet::{ContractAddress, get_caller_address};
-use alexandria_storage::list::{List, ListTrait};
+use crowdfunding::structs::{Request, RequestVoters, Summary};
 
 #[starknet::interface]
 pub trait ICrowdfunding<TContractState> {
+    fn createCrowdfunding (ref self: TContractState, minimum: usize);
     fn contribute(ref self: TContractState, amount: usize);
-    fn createRequest(ref self: TContractState, description: ByteArray, value: usize, recipient: ContractAddress);
+    fn createRequest(ref self: TContractState, description: ByteArray, value: usize, recipient: ContractAddress) -> usize;
     fn approveRequest(ref self: TContractState, index: usize);
     fn finalizeRequest(ref self: TContractState, index: usize);
-    fn getRequestVoters(ref self: TContractState, indexRequest: usize, addressVoter: ContractAddress) -> bool;
-    fn getRequestCount(ref self: TContractState) -> usize;
-    // fn getSummary(ref self: TContractState) -> Summary;
+    fn getRequest(self: @TContractState, index: usize) -> Request;
+    fn getRequestVoters(self: @TContractState, indexRequest: usize, addressVoter: ContractAddress) -> bool;
+    fn getRequestCount(self: @TContractState) -> usize;
+    fn getSummary(self: @TContractState) -> Summary;
     fn getManager(self: @TContractState) -> ContractAddress;
     fn getMinimumContribution(self: @TContractState) -> usize;
 }
 
 #[starknet::contract]
 pub mod Crowdfunding {
-    // use super::Summary;
-    use super::{Request, RequestVoters};
-    use super::{ContractAddress, get_caller_address};
-    use super::{List, ListTrait};
+    use starknet::storage::StoragePathEntry;
     use starknet::storage::Map;
+    use super::{Request, RequestVoters, Summary, ContractAddress, get_caller_address};
 
     #[storage]
     struct Storage {
@@ -30,17 +28,24 @@ pub mod Crowdfunding {
         minimumContribution: usize,
         approvers: Map::<ContractAddress, bool>,
         numberOfApprovers: usize,
-        requests: Map::<usize, RequestVoters>
+        requests: Map::<usize, RequestVoters>,
+        number_of_requests: usize,
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, owner: ContractAddress, minimum: usize) {
-        self.manager.write(owner);
+    fn constructor(ref self: ContractState, creator: ContractAddress, minimum: usize) {
+        self.manager.write(creator);
         self.minimumContribution.write(minimum);
     }
     
     #[abi(embed_v0)]
     impl Crowdfunding of super::ICrowdfunding<ContractState> {
+        fn createCrowdfunding (ref self: ContractState, minimum: usize) {
+            let caller = get_caller_address();
+            self.manager.write(caller);
+            self.minimumContribution.write(minimum);
+        }
+
         fn contribute(ref self: ContractState, amount: usize) {
             let minimumContribution = self.minimumContribution.read();
             assert!(amount > minimumContribution, "The contribution need to be greater than {}", minimumContribution);
@@ -49,28 +54,44 @@ pub mod Crowdfunding {
             self.approvers.write(caller, true);
         }
 
-        fn createRequest(ref self: ContractState, description: ByteArray, value: usize, recipient: ContractAddress) {
-            let _newRequest = Request { description, value, recipient, isComplete: false, yesVotes: 0 };
-            self.requests.entry(0).request.write(_newRequest);
+        fn createRequest(ref self: ContractState, description: ByteArray, value: usize, recipient: ContractAddress) -> usize {
+            let new_request = Request { description, value, recipient, isComplete: false, yesVotes: 0 };
+            let request_idx = self.number_of_requests.read() + 1;
+
+            self.number_of_requests.write(request_idx);
+            self.requests.entry(request_idx).request.write(new_request);
+
+            request_idx
+        }
+
+        fn getRequest(self: @ContractState, index: usize) -> Request {
+            let request = self.requests.entry(index).request.read();
+            request
         }
         
         fn approveRequest(ref self: ContractState, index: usize) {}
         fn finalizeRequest(ref self: ContractState, index: usize) {}
-        fn getRequestVoters(ref self: ContractState, indexRequest: usize, addressVoter: ContractAddress) -> bool {
+
+        fn getRequestVoters(self: @ContractState, indexRequest: usize, addressVoter: ContractAddress) -> bool {
             true
         }
-        fn getRequestCount(ref self: ContractState) -> usize {
+
+        fn getRequestCount(self: @ContractState) -> usize {
             1
         }
-        // fn getSummary(ref self: ContractState) -> Summary {
-        //     Summary { 
-        //         minimumContribution: 1, 
-        //         balance: 1, 
-        //         numberOfRequests: 1, 
-        //         numberOfApprovers: 1,
-        //         managerAddress: "address"
-        //     }
-        // }
+        
+        fn getSummary(self: @ContractState) -> Summary {
+            let summary = Summary { 
+                minimumContribution: 1, 
+                balance: 1, 
+                numberOfRequests: 1, 
+                numberOfApprovers: 1,
+                managerAddress: self.getManager(),
+            };
+            
+            summary
+        }
+        
         fn getManager(self: @ContractState) -> ContractAddress {
             self.manager.read()
         }

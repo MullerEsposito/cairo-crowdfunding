@@ -1,15 +1,4 @@
-use starknet::{ContractAddress, Store};
-use starknet::storage::{Vec};
-use alexandria_storage::list::{List, ListTrait};
-
-// #[derive(Drop, Serde, Store)]
-// pub struct Summary {
-//     pub minimumContribution: usize,
-//     pub balance: usize,
-//     pub numberOfRequests: u16,
-//     pub numberOfApprovers: u16,
-//     pub managerAddress: ContractAddress
-// }
+use starknet::{ContractAddress, storage::Vec};
 
 #[derive(Drop, Serde, starknet::Store)]
 pub struct Request {
@@ -18,6 +7,15 @@ pub struct Request {
     pub recipient: ContractAddress,
     pub isComplete: bool,
     pub yesVotes: usize
+}
+
+#[derive(Drop, Serde, starknet::Store)]
+pub struct Summary {
+    pub minimumContribution: usize,
+    pub balance: usize,
+    pub numberOfRequests: u16,
+    pub numberOfApprovers: u16,
+    pub managerAddress: ContractAddress
 }
 
 #[starknet::storage_node]
