@@ -1,31 +1,25 @@
-use starknet::{ContractAddress, storage::Vec};
+use starknet::{ContractAddress, storage::Map};
 
 #[derive(Drop, Serde, starknet::Store)]
 pub struct Request {
-    pub description: ByteArray,
-    pub value: usize,
-    pub recipient: ContractAddress,
-    pub isComplete: bool,
-    pub yesVotes: usize
+  pub description: ByteArray,
+  pub value: usize,
+  pub recipient: ContractAddress,
+  pub is_complete: bool,
+  pub yes_votes: usize
 }
 
 #[derive(Drop, Serde, starknet::Store)]
 pub struct Summary {
-    pub minimumContribution: usize,
-    pub balance: usize,
-    pub numberOfRequests: u16,
-    pub numberOfApprovers: u16,
-    pub managerAddress: ContractAddress
+  pub minimum_contribution: usize,
+  pub balance: usize,
+  pub number_of_requests: usize,
+  pub number_of_approvers: usize,
+  pub manager_address: ContractAddress
 }
 
 #[starknet::storage_node]
 pub struct RequestVoters {
-    pub request: Request,
-    pub voters: Vec<Voter>
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct Voter {
-    address: ContractAddress,
-    isVoted: bool
+  pub request: Request,
+  pub voters: Map<ContractAddress, bool>
 }
