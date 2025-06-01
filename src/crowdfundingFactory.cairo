@@ -5,6 +5,7 @@ pub trait ICrowdfundingFactory<TContractState> {
   fn create_crowdfunding(ref self: TContractState, manager: ContractAddress, minimum_contribute: usize) -> ContractAddress;
   fn update_crowdfunding_class_hash(ref self: TContractState, new_class_hash: ClassHash);
   fn get_crowdfunding_class_hash(ref self: TContractState) -> ClassHash;
+  fn get_crowdfundings(ref self: TContractState) -> Array<ContractAddress>;
 }
 
 #[starknet::contract]
@@ -33,7 +34,7 @@ pub mod CrowdfundingFactory {
 
       let (deployed_address, _) = deploy_syscall(
         self.crowdfunding_class_hash.read(),
-        0,
+        self.crowdfundings.len().into(),
         constructor_calldata.span(),
         false,
       ).unwrap();
@@ -48,6 +49,16 @@ pub mod CrowdfundingFactory {
 
     fn get_crowdfunding_class_hash(ref self: ContractState) -> ClassHash {
       self.crowdfunding_class_hash.read()
+    }
+
+    fn get_crowdfundings(ref self: ContractState) -> Array<ContractAddress> {      
+      let mut crowdfundings = array![];
+
+      for i in 0..self.crowdfundings.len() {
+        crowdfundings.append(self.crowdfundings.at(i).read());
+      };
+
+      crowdfundings
     }
   }
 }
