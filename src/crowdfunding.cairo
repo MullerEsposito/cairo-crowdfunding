@@ -3,9 +3,8 @@ use crowdfunding::structs::{Request, RequestVoters, Summary};
 
 #[starknet::interface]
 pub trait ICrowdfunding<TContractState> {
-  fn create_crowdfunding (ref self: TContractState, minimum: usize);
   fn contribute(ref self: TContractState, amount: usize);
-  fn create_request(ref self: TContractState, description: ByteArray, value: usize, recipient: ContractAddress) -> usize;
+  fn create_request(ref self: TContractState, description: ByteArray, value: usize, supplier: ContractAddress) -> usize;
   fn approve_request(ref self: TContractState, request_id: usize);
   fn finalize_request(ref self: TContractState, request_id: usize);
   fn get_request(self: @TContractState, request_id: usize) -> Request;
@@ -40,12 +39,6 @@ pub mod Crowdfunding {
     
   #[abi(embed_v0)]
   impl Crowdfunding of super::ICrowdfunding<ContractState> {
-    fn create_crowdfunding (ref self: ContractState, minimum: usize) {
-      let caller = get_caller_address();
-      self.manager.write(caller);
-      self.minimum_contribution.write(minimum);
-    }
-
     fn contribute(ref self: ContractState, amount: usize) {
       let minimum_contribution = self.minimum_contribution.read();
       assert!(amount > minimum_contribution, "The contribution need to be greater than {}", minimum_contribution);
@@ -54,8 +47,8 @@ pub mod Crowdfunding {
       self.approvers.write(caller, true);
     }
 
-    fn create_request(ref self: ContractState, description: ByteArray, value: usize, recipient: ContractAddress) -> usize {
-      let new_request = Request { description, value, recipient, is_complete: false, yes_votes: 0 };
+    fn create_request(ref self: ContractState, description: ByteArray, value: usize, supplier: ContractAddress) -> usize {
+      let new_request = Request { description, value, supplier, is_complete: false, yes_votes: 0 };
       let request_id = self.number_of_requests.read() + 1;
 
       self.number_of_requests.write(request_id);

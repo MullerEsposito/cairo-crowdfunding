@@ -4,7 +4,7 @@ use starknet::{ContractAddress, storage::Map};
 pub struct Request {
   pub description: ByteArray,
   pub value: usize,
-  pub recipient: ContractAddress,
+  pub supplier: ContractAddress,
   pub is_complete: bool,
   pub yes_votes: usize
 }
