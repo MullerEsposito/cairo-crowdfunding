@@ -4,7 +4,7 @@ use starknet::{ContractAddress};
 use snforge_std::{declare, ContractClassTrait, DeclareResultTrait};
 
 
-pub fn deployCrowdfundingContract(manager: ContractAddress, minimumContribution: usize) -> (ICrowdfundingDispatcher, ContractAddress) {
+pub fn deploy_crowdfunding_contract(manager: ContractAddress, minimumContribution: usize) -> (ICrowdfundingDispatcher, ContractAddress) {
     let crowdfunding_clash_hash = declare("Crowdfunding").unwrap().contract_class();
 
     let mut constructor_calldata: Array<felt252> = array![];
@@ -13,8 +13,7 @@ pub fn deployCrowdfundingContract(manager: ContractAddress, minimumContribution:
 
     let (crowdfunding_contract_address, _) = crowdfunding_clash_hash.deploy(@constructor_calldata).unwrap();
     let crowdfunding_dispatch = ICrowdfundingDispatcher { contract_address: crowdfunding_contract_address };
-
-    println!("Crowdfunding contract deployed at address: {:?}", crowdfunding_contract_address);
-
+    
     (crowdfunding_dispatch, crowdfunding_contract_address)
 }
+
