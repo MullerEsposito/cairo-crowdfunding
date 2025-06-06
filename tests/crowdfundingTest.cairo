@@ -82,3 +82,20 @@ fn it_should_be_able_to_manager_to_make_a_payment_request() {
   assert_eq!(created_request.value, request_value);
   assert_eq!(created_request.supplier, supplier);
 }
+
+#[test]
+fn it_should_increment_number_of_approvers() {
+  let caller = ADDRESSES::CALLER.get();
+  let sponsor = ADDRESSES::SPONSOR.get();
+  let minimum_contribution = 10;
+  let contribution = 15;
+
+  let (crowdfunding_dispatcher, crowdfunding_address) = deploy_crowdfunding(caller, minimum_contribution);
+
+  cheat_caller_address(crowdfunding_address, sponsor, CheatSpan::TargetCalls(1));
+  crowdfunding_dispatcher.contribute(contribution);
+
+  let number_of_approvers = load(crowdfunding_address, selector!("number_of_approvers"), 1);
+
+  assert_eq!(*number_of_approvers.at(0), 1.into());
+}

@@ -44,6 +44,11 @@ pub mod Crowdfunding {
       assert!(amount > minimum_contribution, "The contribution need to be greater than {}", minimum_contribution);
 
       let caller = get_caller_address();
+      let is_new_approver = !self.approvers.entry(caller).read();
+      if is_new_approver {
+        let current_number = self.number_of_approvers.read();
+        self.number_of_approvers.write(current_number + 1);
+      };
       self.approvers.write(caller, true);
     }
 
